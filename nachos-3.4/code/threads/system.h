@@ -19,6 +19,7 @@
 #include "synch.h"
 #include "machine.h"
 
+
 // Initialization and cleanup routines
 extern void Initialize(int argc, char **argv); 	// Initialization,
 						// called before anything else
@@ -32,12 +33,16 @@ extern Interrupt *interrupt;			// interrupt status
 extern Statistics *stats;			// performance metrics
 extern Timer *timer;				// the hardware alarm clock
 extern int threadChoice;
+/*  Begin Code Changes By Group ACM ( Ali, Connor, Majid) */
 extern BitMap* bitMap;
-//extern Thread** IPT;
 extern List* FIFOList;
+extern int pageReplacementAlg;
+/*  End Code Changes By Group ACM ( Ali, Connor, Majid) */
 
 #ifdef USER_PROGRAM
+/*  Begin Code Changes By Group ACM ( Ali, Connor, Majid) */
 #include "machine.h"
+/*  End Code Changes By Group ACM ( Ali, Connor, Majid) */
 extern Machine* machine;	// user program memory and registers
 extern List* activeThreads;	// active thread list for process management
 extern int threadID;	// unique process id

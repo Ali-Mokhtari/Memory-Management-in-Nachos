@@ -35,8 +35,7 @@ main.o: ../threads/main.cc /usr/include/stdc-predef.h \
  ../threads/scheduler.h ../threads/list.h ../machine/interrupt.h \
  ../threads/list.h ../machine/stats.h ../machine/timer.h \
  ../threads/utility.h ../threads/bitmap.h ../threads/openfile.h \
- ../threads/synch.h ../machine/machine.h ../machine/translate.h \
- ../machine/disk.h
+ ../threads/synch.h
 list.o: ../threads/list.cc /usr/include/stdc-predef.h \
  ../threads/copyright.h ../threads/list.h ../threads/utility.h \
  ../threads/bool.h ../machine/sysdep.h ../threads/copyright.h \
@@ -69,8 +68,7 @@ scheduler.o: ../threads/scheduler.cc /usr/include/stdc-predef.h \
  /usr/include/xlocale.h ../threads/thread.h ../threads/system.h \
  ../machine/interrupt.h ../threads/list.h ../machine/stats.h \
  ../machine/timer.h ../threads/utility.h ../threads/bitmap.h \
- ../threads/openfile.h ../threads/synch.h ../machine/machine.h \
- ../machine/translate.h ../machine/disk.h
+ ../threads/openfile.h ../threads/synch.h
 synch.o: ../threads/synch.cc /usr/include/stdc-predef.h \
  ../threads/copyright.h ../threads/synch.h ../threads/thread.h \
  ../threads/utility.h ../threads/bool.h ../machine/sysdep.h \
@@ -88,8 +86,7 @@ synch.o: ../threads/synch.cc /usr/include/stdc-predef.h \
  /usr/include/xlocale.h ../threads/list.h ../threads/system.h \
  ../threads/scheduler.h ../machine/interrupt.h ../threads/list.h \
  ../machine/stats.h ../machine/timer.h ../threads/utility.h \
- ../threads/bitmap.h ../threads/openfile.h ../machine/machine.h \
- ../machine/translate.h ../machine/disk.h
+ ../threads/bitmap.h ../threads/openfile.h
 synchlist.o: ../threads/synchlist.cc /usr/include/stdc-predef.h \
  ../threads/copyright.h ../threads/synchlist.h ../threads/list.h \
  ../threads/utility.h ../threads/bool.h ../machine/sysdep.h \
@@ -122,8 +119,7 @@ system.o: ../threads/system.cc /usr/include/stdc-predef.h \
  /usr/include/xlocale.h ../threads/thread.h ../threads/scheduler.h \
  ../threads/list.h ../machine/interrupt.h ../threads/list.h \
  ../machine/stats.h ../machine/timer.h ../threads/utility.h \
- ../threads/bitmap.h ../threads/openfile.h ../threads/synch.h \
- ../machine/machine.h ../machine/translate.h ../machine/disk.h
+ ../threads/bitmap.h ../threads/openfile.h ../threads/synch.h
 thread.o: ../threads/thread.cc /usr/include/stdc-predef.h \
  ../threads/copyright.h ../threads/thread.h ../threads/utility.h \
  ../threads/bool.h ../machine/sysdep.h ../threads/copyright.h \
@@ -142,8 +138,7 @@ thread.o: ../threads/thread.cc /usr/include/stdc-predef.h \
  ../threads/list.h ../threads/system.h ../threads/scheduler.h \
  ../machine/interrupt.h ../threads/list.h ../machine/stats.h \
  ../machine/timer.h ../threads/utility.h ../threads/bitmap.h \
- ../threads/openfile.h ../machine/machine.h ../machine/translate.h \
- ../machine/disk.h
+ ../threads/openfile.h
 utility.o: ../threads/utility.cc /usr/include/stdc-predef.h \
  ../threads/copyright.h ../threads/utility.h ../threads/bool.h \
  ../machine/sysdep.h ../threads/copyright.h /usr/include/stdio.h \
@@ -175,8 +170,7 @@ threadtest.o: ../threads/threadtest.cc /usr/include/stdc-predef.h \
  /usr/include/xlocale.h ../threads/thread.h ../threads/scheduler.h \
  ../threads/list.h ../machine/interrupt.h ../threads/list.h \
  ../machine/stats.h ../machine/timer.h ../threads/utility.h \
- ../threads/bitmap.h ../threads/openfile.h ../threads/synch.h \
- ../machine/machine.h ../machine/translate.h ../machine/disk.h
+ ../threads/bitmap.h ../threads/openfile.h ../threads/synch.h
 interrupt.o: ../machine/interrupt.cc /usr/include/stdc-predef.h \
  ../threads/copyright.h ../machine/interrupt.h ../threads/list.h \
  ../threads/copyright.h ../threads/utility.h ../threads/bool.h \
@@ -194,8 +188,7 @@ interrupt.o: ../machine/interrupt.cc /usr/include/stdc-predef.h \
  /usr/include/xlocale.h ../threads/system.h ../threads/thread.h \
  ../threads/scheduler.h ../threads/list.h ../machine/interrupt.h \
  ../machine/stats.h ../machine/timer.h ../threads/utility.h \
- ../threads/bitmap.h ../threads/openfile.h ../threads/synch.h \
- ../machine/machine.h ../machine/translate.h ../machine/disk.h
+ ../threads/bitmap.h ../threads/openfile.h ../threads/synch.h
 sysdep.o: ../machine/sysdep.cc /usr/include/stdc-predef.h \
  ../threads/copyright.h /usr/include/stdio.h /usr/include/features.h \
  /usr/include/x86_64-linux-gnu/sys/cdefs.h \
@@ -256,8 +249,7 @@ sysdep.o: ../machine/sysdep.cc /usr/include/stdc-predef.h \
  ../threads/system.h ../threads/thread.h ../threads/scheduler.h \
  ../threads/list.h ../machine/interrupt.h ../machine/stats.h \
  ../machine/timer.h ../threads/utility.h ../threads/bitmap.h \
- ../threads/openfile.h ../threads/synch.h ../machine/machine.h \
- ../machine/translate.h ../machine/disk.h
+ ../threads/openfile.h ../threads/synch.h
 stats.o: ../machine/stats.cc /usr/include/stdc-predef.h \
  ../threads/copyright.h ../threads/utility.h ../threads/copyright.h \
  ../threads/bool.h ../machine/sysdep.h /usr/include/stdio.h \
@@ -290,8 +282,7 @@ timer.o: ../machine/timer.cc /usr/include/stdc-predef.h \
  ../threads/thread.h ../threads/scheduler.h ../threads/list.h \
  ../machine/interrupt.h ../threads/list.h ../machine/stats.h \
  ../machine/timer.h ../threads/bitmap.h ../threads/openfile.h \
- ../threads/synch.h ../machine/machine.h ../machine/translate.h \
- ../machine/disk.h
+ ../threads/synch.h
 # DEPENDENCIES MUST END AT END OF FILE
 # IF YOU PUT STUFF HERE IT WILL GO AWAY
 # see make depend above

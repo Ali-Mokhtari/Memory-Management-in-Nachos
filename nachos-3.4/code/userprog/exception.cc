@@ -35,7 +35,13 @@
 static int SRead(int addr, int size, int id);
 static void SWrite(char *buffer, int size, int id);
 Thread * getID(int toGet);
+
+/* Begin Changes made by ACM Group  */
+
 Thread * IPT[NumPhysPages];
+
+/* End Changes made by ACM Group  */
+
 // end FA98
 
 //----------------------------------------------------------------------
@@ -114,38 +120,36 @@ ExceptionHandler(ExceptionType which)
 		break;
 
 	
-	/************************************* Changes made by Ali Mokhtari *************************/
+	/* Begin Changes made by ACM Group  */
 
-		
 	case PageFaultException:
 		{
 		stats->numPageFaults++;
-		printf("PageFaultException [%d]\n", stats->numPageFaults);
+		printf("Page Fault : #%d \n", stats->numPageFaults);
 		int badVAddr = machine->ReadRegister(BadVAddrReg);
 		int virtPageNum = badVAddr / PageSize; 
-		printf(" Bad Virtual Page Number : %d \n", virtPageNum);
-		int emptyPhysPage = bitMap->Find();
-		
+		printf("  -- Process %d requested virtual page %d \n", currentThread->getID(), virtPageNum);
+		int emptyPhysPage = bitMap->Find();		
 		OpenFile *swapFile = fileSystem->Open(currentThread->space->swapFileName); 
 
 		if (emptyPhysPage != -1){
-			printf(" Empty page number in main memory: %d \n", emptyPhysPage);
+			
 			currentThread->space->pageTable[virtPageNum].physicalPage = emptyPhysPage;
-			printf("Virtual page# %d is loaded to pag# %d in MM from %s  \n ", virtPageNum, emptyPhysPage,currentThread->space->swapFileName );
+			printf("   --- Free physical page#%d assigned to process %d\n", emptyPhysPage, currentThread->getID()) ; 			
 			swapFile->ReadAt(&(machine->mainMemory[emptyPhysPage*PageSize]), PageSize, virtPageNum*PageSize);  
 			currentThread->space->pageTable[virtPageNum].valid = TRUE;
 			// update IPT
-			printf("Inverted Page Table [ %d ] is updated to be used by thread %d \n",emptyPhysPage, currentThread->getID() );
+			//printf("Inverted Page Table [ %d ] is updated to be used by thread %d \n",emptyPhysPage, currentThread->getID() );
 			IPT[emptyPhysPage]=currentThread;
 			int * pEmptyPage = &emptyPhysPage;
 			FIFOList->Append(pEmptyPage);
 
 		}
 		else{
-			printf(" No free page is found \n");
+			printf(" --- No free page is available \n");
 			// go for FIFO or Random Page replacement
-			int FIFO = 1;
-			if (FIFO){
+			
+			if (pageReplacementAlg == 1){
 				
 				int * FirstPage = (int*) FIFOList->Remove(); 
 				
@@ -175,7 +179,7 @@ ExceptionHandler(ExceptionType which)
 
 
 
-			else{// Random replacement: 
+			else if (pageReplacementAlg == 2 ){// Random replacement: 
 
 				int rndPage = rand() % 32;
 				for (int i = 0; i < IPT[rndPage]->space->numPages; i++)
@@ -197,10 +201,14 @@ ExceptionHandler(ExceptionType which)
 				// update IPT
 				IPT[rndPage]=currentThread;
 			}
-			printf("BitMap After PageFaulException Replace/Allocate\n");
-			bitMap->Print();
+			else{
+				printf(" The process is terminated \n");
+				delete currentThread->space;
+				currentThread->Finish() ;
 
-
+			}
+			// printf("BitMap After PageFaulException Replace/Allocate\n");
+			// bitMap->Print();
 		}
 		}
 		break;
@@ -346,28 +354,27 @@ ExceptionHandler(ExceptionType which)
 			case SC_Exit :	// Exit a process.
 			{
 				printf("SYSTEM CALL: Exit, called by thread %i.\n",currentThread->getID());
-				if(arg1 == 0)	// Did we exit properly?  If not, show an error message.
-					printf("Process %i exited normally with arg1 = 0\n", currentThread->getID());
-				else
-					printf("ERROR: Process %i exited with value arg1 = %d!\n", currentThread->getID(), arg1);
+				// if(arg1 == 0)	// Did we exit properly?  If not, show an error message.
+				// 	printf("Process %i exited normally with value = 0\n", currentThread->getID());
+				// else
+				printf(" Process %i exited with value value = %d \n\n", currentThread->getID(), arg1);
 				
 				if(currentThread->space){	// Delete the used memory from the process.
-				bitMap->Print();
-				for (int i = 0; i < NumPhysPages; i++)
-				{
-					///printf("Phys. Page# %d  is used by thread %d \n" , i ,  IPT[i]->getID() );
-					if (IPT[i] == currentThread){
-						printf("Bitmap of thread %d is deleted \n", currentThread->getID());
-						bitMap->Clear(i);
-						bitMap->Print();
+					
+					for (int i = 0; i < NumPhysPages; i++)
+					{						
+						if (IPT[i] == currentThread){
+							//printf("Bitmap of thread %d is deleted \n", currentThread->getID());
+							bitMap->Clear(i);
+							//bitMap->Print();
+						}
+						
 					}
-					
-				}
-				
+					bitMap->Print();
 					
 				
 				}
-				printf("Thread %d is finieshed \n", currentThread->getID());
+				printf(" Thread %d finished \n\n", currentThread->getID());
 				
 				fileSystem->Remove(currentThread->space->swapFileName);
 				delete currentThread->space;

@@ -9,7 +9,7 @@
 
 #include "syscall.h"
 
-#define Dim 	2	/* sum total of the arrays doesn't fit in 
+#define Dim 	20	/* sum total of the arrays doesn't fit in 
 			 * physical memory 
 			 */
 
@@ -20,8 +20,7 @@ int C[Dim][Dim];
 int
 main()
 {
-    int i, j, k;
-	Write("In Matmult before loops \n", 30,ConsoleOutput);
+    int i, j, k;	
     for (i = 0; i < Dim; i++)		/* first initialize the matrices */
 	for (j = 0; j < Dim; j++) {
 	     A[i][j] = i;
@@ -33,7 +32,7 @@ main()
 	for (j = 0; j < Dim; j++)
             for (k = 0; k < Dim; k++)
 		 C[i][j] += A[i][k] * B[k][j];
-	Write("In Matmult before exit \n", 30,ConsoleOutput);
-    //Exit(C[Dim-1][Dim-1]);		/* and then we're done */
-	Exit(0);		/* and then we're done */
+	
+    Exit(C[Dim-1][Dim-1]);		/* and then we're done */
+	
 }

@@ -63,8 +63,12 @@ SwapHeader (NoffHeader *noffH)
 AddrSpace::AddrSpace(OpenFile *executable, int thread_id) // adding thread_id
 {
 
-    printf("I am now in addrspace.cc\n");
+    //printf("I am now in addrspace.cc\n");
+
+    /*  Begin Code Changes By Group ACM ( Ali, Connor, Majid) */
     bitMap->Print();
+    /*  End Code Changes By Group ACM ( Ali, Connor, Majid) */
+
     NoffHeader noffH;
     unsigned int i, size;
 
@@ -81,33 +85,24 @@ AddrSpace::AddrSpace(OpenFile *executable, int thread_id) // adding thread_id
     
     numPages = divRoundUp(size, PageSize);
     size = numPages * PageSize;
-    printf("The required page for (code + uinit.data + init.data): %d \n", numPages);
-// **************************************** Begin changes made by Connor Rawls  ****************************************
-    swapFileName = new char[32];
    
-    sprintf(swapFileName, "%d.swap",thread_id);
-    printf("swap file name: %s \n", swapFileName);
-    
-    
-    printf("%s created \n", swapFileName);
-   
-    
-    
-    //ASSERT(numPages <= NumPhysPages);		// check we're not trying
-						// to run anything too big --
-						// at least until we have
-						// virtual memory
+
     
 
+     //printf("The required page for (code + uinit.data + init.data): %d \n", numPages);
+    
     DEBUG('a', "Initializing address space, num pages %d, size %d\n", 
 					numPages, size);
     
     
     pageTable = new TranslationEntry[numPages];
     for (i = 0; i < numPages; i++) {
-        // Return empty address
         
-        //pageTable[i].physicalPage = bitMap->Find();      
+        /*  Begin Code Changes By Group ACM ( Ali, Connor, Majid) */
+
+        //pageTable[i].physicalPage = bitMap->Find();  
+
+        /*  End Code Changes By Group ACM ( Ali, Connor, Majid) */    
         pageTable[i].virtualPage = i;       
         pageTable[i].valid = FALSE;
         pageTable[i].use = FALSE;
@@ -116,40 +111,26 @@ AddrSpace::AddrSpace(OpenFile *executable, int thread_id) // adding thread_id
                         // a separate page, we could set its 
                         // pages to be read-only
     }
-    printf("Page table created \n ");
-    //  for (i=0 ; i<numPages; i++)
-    //      printf("Page[%d] = %d  , Frame# = %d \n", i,pageTable[i].virtualPage ,pageTable[i].physicalPage);
-      
-// then, copy in the code and data segments into memory
-
    
-    // if (noffH.code.size > 0) {
-    //     DEBUG('a', "Initializing code segment, at 0x%x, size %d\n", 
-	// 		noffH.code.virtualAddr, noffH.code.size);        
-    //     executable->ReadAt(buffer,noffH.code.size+noffH.initData.size, noffH.code.inFileAddr);       
-        
-    // }
-    // if (noffH.initData.size > 0) {
-    //     DEBUG('a', "Initializing data segment, at 0x%x, size %d\n", 
-	// 		noffH.initData.virtualAddr, noffH.initData.size);        
-    //     executable->ReadAt(buffer+noffH.initData.virtualAddr,noffH.initData.size, noffH.initData.inFileAddr);        
-    // }
-    
-    int size2 = noffH.code.size + noffH.initData.size + noffH.uninitData.size ;//+ UserStackSize  ;
-    char * buffer = new char[size2];
-    memset(buffer, 0, size2);
-    fileSystem->Create(swapFileName, size2)  ;
-    executable->ReadAt(buffer,size2, sizeof(noffH)); // sizeof(noffh) -> header size
-     OpenFile *swapFile = fileSystem->Open(swapFileName);   
-    swapFile->WriteAt(buffer, size2,0);
-    printf("Executable has been written to %s \n", swapFileName);
-    
+    /*  Begin Code Changes By Group ACM ( Ali, Connor, Majid) */
+    int swapSize = noffH.code.size + noffH.initData.size + noffH.uninitData.size ;//+ UserStackSize  ;    
+    char * buffer = new char[swapSize];
+    memset(buffer, 0, swapSize);
+
+    swapFileName = new char[32];   
+    sprintf(swapFileName, "%d.swap",thread_id); 
+    fileSystem->Create(swapFileName, swapSize)  ;
+    printf("%s created \n", swapFileName);
+    executable->ReadAt(buffer,swapSize, sizeof(noffH)); // sizeof(noffh) -> header size
+    OpenFile *swapFile = fileSystem->Open(swapFileName);   
+    swapFile->WriteAt(buffer, swapSize,0);
+    //printf("Executable has been written to %s \n", swapFileName);    
     //bitMap->Print();
     //machine->PrintMemory();
     delete []buffer;
-    delete swapFile;
-    printf("Pointer to swap file removed\n");
-    printf("beffuer is deleted \n");
+    delete swapFile;  
+
+    /*  End Code Changes By Group ACM ( Ali, Connor, Majid) */
    
 }
 

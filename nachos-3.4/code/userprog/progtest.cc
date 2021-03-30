@@ -22,7 +22,8 @@
 
 void
 StartProcess(char *filename){
-    printf("The process of user program %s is started\n ",filename );
+    
+    //printf("The process of user program %s is started\n ",filename );
     OpenFile *executable = fileSystem->Open(filename);  
     AddrSpace *space;
 
@@ -31,8 +32,13 @@ StartProcess(char *filename){
 	return;
     }
 	
-    printf("The address space is going to be created \n ");
+    
+    /*  Begin Code Changes By Group ACM ( Ali, Connor, Majid) */
+
+    //printf("The address space is going to be created \n ");
     space = new AddrSpace(executable, 0);      
+
+    /*  End Code Changes By Group ACM ( Ali, Connor, Majid) */
     currentThread->space = space;
     delete executable;			// close file
     
@@ -41,7 +47,7 @@ StartProcess(char *filename){
     space->RestoreState();		// load page table register
     printf("Page table loaded.\n");
     machine->Run();			// jump to the user progam
-    printf("User program executed.\n");
+    //printf("User program executed.\n");
     ASSERT(FALSE);			// machine->Run never returns;
 					// the address space exits
 					// by doing the syscall "exit"

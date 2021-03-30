@@ -93,17 +93,36 @@ main(int argc, char **argv)
             printf (copyright);
 #ifdef USER_PROGRAM
         if (!strcmp(*argv, "-x")) {        	// run a user program	
-// **************************************** Begin changes made by Connor Rawls ****************************************
-		printf("I am in main.cc\n");
+/*  Begin Code Changes By Group ACM ( Ali, Connor, Majid) */
+		printf(" Entering main\n");
+		printf(" Number of Physical Pages: %d \n", NumPhysPages);
+		printf(" Page Size: %d \n", PageSize );
+		switch(pageReplacementAlg){
+			case 0:
+				printf(" Page Replacement Algorithm: Disable Virtual Memory (Demand Paging Only)\n");
+				break;
+
+			case 1:
+				printf(" Page Replacement Algorithm: FIFO \n");
+				break ; 
+			
+			case 2:
+				printf(" Page Replacement Algorithm: Random \n");
+				break ; 
+			
+			default:
+				printf(" Page Replacement Algorithm: Disable Virtual Memory (Demand Paging Only)\n");
+				pageReplacementAlg = 0 ;
+		}
+		
 	    if(!argc > 1){
 			printf("Incorrect input. Usage: ./nachos -x <program>\n");
 			return 1;
 		}
-		printf("I am going to StartProcess(%s) \n", *(argv + 1));
-// **************************************** End changes made by Connor Rawls ****************************************
-            StartProcess(*(argv + 1));
-		printf("I'm here");
-            argCount = 2;
+		//printf("I am going to StartProcess(%s) \n", *(argv + 1));
+/*  End Code Changes By Group ACM ( Ali, Connor, Majid) */
+        StartProcess(*(argv + 1));
+		argCount = 2;
         } else if (!strcmp(*argv, "-c")) {      // test the console
 	    if (argc == 1)
 	        ConsoleTest(NULL, NULL);

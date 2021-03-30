@@ -15,8 +15,8 @@
 
 #include "copyright.h"
 #include "filesys.h"
-// **************************************** Begin changes made by Connor Rawls ****************************************
 #include "bitmap.h"
+#include "translate.h"
 
 #define UserStackSize		1024 	// increase this as necessary!
 
@@ -34,14 +34,17 @@ class AddrSpace {
     void SaveState();			// Save/restore address space-specific
     void RestoreState();		// info on a context switch 
     
-    char * swapFileName; 
-    // private:
+    /*  Begin Code Changes By Group ACM ( Ali, Connor, Majid) */
+
+    char * swapFileName;     
     TranslationEntry *pageTable;	// Assume linear page table translation
 					// for now!
     unsigned int numPages;		// Number of pages in the virtual 
 					// address space
+    /*  End Code Changes By Group ACM ( Ali, Connor, Majid) */
+   
   
 };
-// **************************************** End changes made by Connor Rawls ****************************************
+
 
 #endif // ADDRSPACE_H

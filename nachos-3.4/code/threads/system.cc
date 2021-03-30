@@ -20,15 +20,16 @@ Statistics *stats;			// performance metrics
 Timer *timer;				// the hardware timer device,
 					// for invoking context switches
 int threadChoice;
-
-//Thread** IPT = new Thread*[NumPhysPages];
+int pageReplacementAlg = 0 ;
 List* FIFOList = new List();
 #ifdef FILESYS_NEEDED
 FileSystem  *fileSystem;
 #endif
 
 #ifdef USER_PROGRAM
+/*  Begin Code Changes By Group ACM ( Ali, Connor, Majid) */
 BitMap * bitMap = new BitMap(NumPhysPages);
+/*  End Code Changes By Group ACM ( Ali, Connor, Majid) */
 Machine *machine;	// user program memory and registers
 List* activeThreads;
 int threadID;
@@ -120,10 +121,18 @@ Initialize(int argc, char **argv)
 	    else
 			threadChoice = atoi(*(argv+1));
 	    argCount = 2;
-	} 
+	}
+	else if (!strcmp(*argv, "-V")) {
+	    //ASSERT(argc > 1);
+		if (argc > 1)
+	    pageReplacementAlg = atoi(*(argv + 1));	// initialize pseudo-random
+						// number generator	    
+	    //argCount = 2;
+	}
 #ifdef USER_PROGRAM
 	if (!strcmp(*argv, "-s"))
 	    debugUserProg = TRUE;
+	
 #endif
 #ifdef FILESYS_NEEDED
 	if (!strcmp(*argv, "-f"))
