@@ -22,6 +22,7 @@ Timer *timer;				// the hardware timer device,
 int threadChoice;
 int pageReplacementAlg = 0 ;
 List* FIFOList = new List();
+int verbosity ; 
 #ifdef FILESYS_NEEDED
 FileSystem  *fileSystem;
 #endif
@@ -127,6 +128,15 @@ Initialize(int argc, char **argv)
 		if (argc > 1)
 	    pageReplacementAlg = atoi(*(argv + 1));	// initialize pseudo-random
 						// number generator	    
+	    //argCount = 2;
+	}
+
+	else if (!strcmp(*argv, "-E")) {
+	    //ASSERT(argc > 1);
+		
+	    verbosity = 1;	// initialize pseudo-random
+						// number generator	
+		//printf("Verbosity is enabled\n")    ;
 	    //argCount = 2;
 	}
 #ifdef USER_PROGRAM

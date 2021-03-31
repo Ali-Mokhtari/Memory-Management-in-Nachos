@@ -120,7 +120,7 @@ AddrSpace::AddrSpace(OpenFile *executable, int thread_id) // adding thread_id
     swapFileName = new char[32];   
     sprintf(swapFileName, "%d.swap",thread_id); 
     fileSystem->Create(swapFileName, swapSize)  ;
-    printf("%s created \n", swapFileName);
+    //printf("%s created \n", swapFileName);
     executable->ReadAt(buffer,swapSize, sizeof(noffH)); // sizeof(noffh) -> header size
     OpenFile *swapFile = fileSystem->Open(swapFileName);   
     swapFile->WriteAt(buffer, swapSize,0);

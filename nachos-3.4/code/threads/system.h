@@ -37,6 +37,7 @@ extern int threadChoice;
 extern BitMap* bitMap;
 extern List* FIFOList;
 extern int pageReplacementAlg;
+extern int verbosity; 
 /*  End Code Changes By Group ACM ( Ali, Connor, Majid) */
 
 #ifdef USER_PROGRAM

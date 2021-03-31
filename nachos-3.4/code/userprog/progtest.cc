@@ -22,7 +22,7 @@
 
 void
 StartProcess(char *filename){
-    
+
     //printf("The process of user program %s is started\n ",filename );
     OpenFile *executable = fileSystem->Open(filename);  
     AddrSpace *space;
@@ -45,7 +45,7 @@ StartProcess(char *filename){
     space->InitRegisters();		// set the initial register values
     
     space->RestoreState();		// load page table register
-    printf("Page table loaded.\n");
+    //printf("Page table loaded.\n");
     machine->Run();			// jump to the user progam
     //printf("User program executed.\n");
     ASSERT(FALSE);			// machine->Run never returns;
