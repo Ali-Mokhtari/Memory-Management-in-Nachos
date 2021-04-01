@@ -66,7 +66,8 @@ AddrSpace::AddrSpace(OpenFile *executable, int thread_id) // adding thread_id
     //printf("I am now in addrspace.cc\n");
 
     /*  Begin Code Changes By Group ACM ( Ali, Connor, Majid) */
-    bitMap->Print();
+    if (verbosity)
+        bitMap->Print();
     /*  End Code Changes By Group ACM ( Ali, Connor, Majid) */
 
     NoffHeader noffH;

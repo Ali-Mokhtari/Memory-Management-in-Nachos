@@ -132,12 +132,16 @@ void
 BitMap::Print() 
 {
     printf("Bitmap set:\n"); 
-    for (int i = 0; i < numBits; i++)
+    for (int i = 0; i < numBits; i++){
+    if (i%5 == 0 && i!=0)
+        printf(" , ");
 	if (Test(i))
 	    printf("1");
 	else
 		printf("0");
-    printf("\n"); 
+     
+    }
+    printf("\n");
 }
 
 // These aren't needed until the FILESYS assignment

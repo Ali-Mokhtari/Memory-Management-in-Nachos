@@ -33,21 +33,22 @@ extern Interrupt *interrupt;			// interrupt status
 extern Statistics *stats;			// performance metrics
 extern Timer *timer;				// the hardware alarm clock
 extern int threadChoice;
+
+
 /*  Begin Code Changes By Group ACM ( Ali, Connor, Majid) */
+extern int verbosity; 
+extern int pageReplacementAlg;
+
+//#ifdef USER_PROGRAM
 extern BitMap* bitMap;
 extern List* FIFOList;
-extern int pageReplacementAlg;
-extern int verbosity; 
 /*  End Code Changes By Group ACM ( Ali, Connor, Majid) */
 
-#ifdef USER_PROGRAM
-/*  Begin Code Changes By Group ACM ( Ali, Connor, Majid) */
-#include "machine.h"
-/*  End Code Changes By Group ACM ( Ali, Connor, Majid) */
+
 extern Machine* machine;	// user program memory and registers
 extern List* activeThreads;	// active thread list for process management
 extern int threadID;	// unique process id
-#endif
+//#endif
 
 #ifdef FILESYS_NEEDED 		// FILESYS or FILESYS_STUB 
 #include "filesys.h"

@@ -94,20 +94,23 @@ main(int argc, char **argv)
 #ifdef USER_PROGRAM
         if (!strcmp(*argv, "-x")) {        	// run a user program	
 /*  Begin Code Changes By Group ACM ( Ali, Connor, Majid) */
-		printf("- Entering main\n");
-		printf(" -- Number of Physical Pages: %d \n", NumPhysPages);
-		printf(" -- Page Size: %d \n", PageSize );
+		printf("-Entering main\n");
+		printf(" --Number of Physical Pages: %d \n", NumPhysPages);
+		printf(" --Page Size: %d \n", PageSize );
 		switch(pageReplacementAlg){
 			case 0:
-				printf(" -- Page Replacement Algorithm: Disable Virtual Memory (Demand Paging Only)\n");
+				printf(" --Page Replacement Algorithm: Disable Virtual Memory (Demand Paging Only)");
+				printf("-------------------------------------------------------------------------\n");
 				break;
 
 			case 1:
 				printf(" -- Page Replacement Algorithm: FIFO \n");
+				printf("---------------------------------------------------\n");
 				break ; 
 			
 			case 2:
 				printf(" -- Page Replacement Algorithm: Random \n");
+				printf("---------------------------------------------------\n");
 				break ; 
 			
 			default:

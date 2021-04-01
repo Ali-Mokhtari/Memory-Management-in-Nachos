@@ -124,156 +124,141 @@ ExceptionHandler(ExceptionType which)
 
 	case PageFaultException:
 		{
-		//IntStatus level = IntOff;
-		
-		(void) interrupt->SetLevel(IntOff);
-		
-		stats->numPageFaults++;
-		printf("Page Fault : #%d \n", stats->numPageFaults);
-		int badVAddr = machine->ReadRegister(BadVAddrReg);
-		int virtPageNum = badVAddr / PageSize; 
-		printf(" -- Process %d requested virtual page %d \n", currentThread->getID(), virtPageNum);
-		int emptyPhysPage = bitMap->Find();		
-		OpenFile *swapFile = fileSystem->Open(currentThread->space->swapFileName); 
-
-		if (emptyPhysPage != -1){
+				
+			(void) interrupt->SetLevel(IntOff);
 			
-			currentThread->space->pageTable[virtPageNum].physicalPage = emptyPhysPage;			
-			printf("  --- Free physical page#%d assigned to process %d\n", emptyPhysPage, currentThread->getID()) ; 
-			swapFile->ReadAt(&(machine->mainMemory[emptyPhysPage*PageSize]), PageSize, virtPageNum*PageSize); 
-			currentThread->space->pageTable[virtPageNum].valid = TRUE;
-			// update IPT
-			//printf("Inverted Page Table [ %d ] is updated to be used by thread %d \n",emptyPhysPage, currentThread->getID() );
-			IPT[emptyPhysPage]=currentThread;
-			int* x = new int (emptyPhysPage);
-			//void * pEmptyPage = &emptyPhysPage;
-			void * pEmptyPage = (void*) x ;
-			//printf("Address of free page :%p \n", pEmptyPage);
-
-			FIFOList->Append(pEmptyPage);			
-			//printf("\n\nFirst = %d , Last = %d\n", * ((int*) FIFOList->getFirst()->item) ,* ((int*) FIFOList->getLast()->item) );
+			stats->numPageFaults++;
 			
-		}
-		else{
-			printf("  --- No free page is available \n");
-			// go for FIFO or Random Page replacement
+			printf("\nPage Fault [stats: %d] \n", stats->numPageFaults);
 			
-			if (pageReplacementAlg == 1){
-				
-				void * FirstPage =  FIFOList->Remove(); 
-				FIFOList->Append(FirstPage);
-				
-
-				int* fpage = (int*) FirstPage; 
-				int firstPage = *fpage; 
-				//firstPage = 31; 
-				int virtualPageReplaced=-1;
-
-				printf("Page %d is the candidate for page replacement \n", firstPage);
-				
-				for (int i = 0; i < IPT[firstPage]->space->numPages; i++)
-				{
-					//printf("i / numpages = %d/%d \n", i,IPT[firstPage]->space->numPages );
-					if (IPT[firstPage]->space->pageTable[i].valid == TRUE){
-						//printf("IPT[firstPage]->space->pageTable[i].physicalPage = %d   firstPage=%d    i = %d   numPages=%d \n",IPT[firstPage]->space->pageTable[i].physicalPage, firstPage, i , IPT[firstPage]->space->numPages );
-						if (IPT[firstPage]->space->pageTable[i].physicalPage == firstPage){
-							virtualPageReplaced = i ;
-							
-							printf("Physical page # %d is associated with virt. page# %d of thread %d \n",firstPage, virtualPageReplaced,IPT[firstPage]->getID());
-							break;
-
-						}
-						
-							
-					}
-				}
-				
-				//printf("Virtual page %d  of thread %d is going to be swapped out from MM \n", virtualPageReplaced, IPT[firstPage]->getID());
-				 
-				if (virtualPageReplaced != -1){
-
-					// if dirt is true
-					
-					if (IPT[firstPage]->space->pageTable[virtualPageReplaced].dirty == TRUE){
-						printf("Page#%d is dirty \n", firstPage);
-						OpenFile *replacedFile = fileSystem->Open(IPT[firstPage]->space->swapFileName);
-						replacedFile->WriteAt(&(machine->mainMemory[firstPage*PageSize]), PageSize, (IPT[firstPage]->space->pageTable[virtualPageReplaced].virtualPage)*PageSize);
-						printf("data swapped out from MM to %s \n", IPT[firstPage]->space->swapFileName);
-						IPT[firstPage]->space->pageTable[virtualPageReplaced].valid = FALSE;
-						delete replacedFile;
-					}
-					
-					swapFile->ReadAt(&(machine->mainMemory[firstPage*PageSize]), PageSize, virtPageNum*PageSize); 
-					IPT[firstPage]->space->pageTable[virtualPageReplaced].valid = FALSE;
-					printf("virtual page# %d is read from %s to physical page# %d in MM\n", virtPageNum, currentThread->space->swapFileName, firstPage ) ;
-					
-					currentThread->space->pageTable[virtPageNum].physicalPage = firstPage;
-					currentThread->space->pageTable[virtPageNum].valid = TRUE;
-					// update IPT
-					IPT[firstPage]=currentThread;
-
-				}
-				
-
-			}
-
-			else if (pageReplacementAlg == 2 ){// Random replacement: 
-
-				int rndPage = rand() % NumPhysPages;
-				
-				printf("random page = %d , Owner of the Page:%d\n", rndPage,  IPT[rndPage]->getID());
-				
-
-				int virtualPageReplaced = -1;
-				for (int i = 0; i < IPT[rndPage]->space->numPages; i++)
-				{					
-					if (IPT[rndPage]->space->pageTable[i].valid == TRUE){
-							if (IPT[rndPage]->space->pageTable[i].physicalPage == rndPage){
-								virtualPageReplaced = i;
-					   			break;
-							}									
-					}
-				}
-				printf("Page %d is the candidate for page replacement \n", rndPage);
-				printf("Virtual page %d  of thread %d is going to be swapped out from MM \n", virtualPageReplaced, IPT[rndPage]->getID());
-				// if dirt is true 
-				
-				if (virtualPageReplaced != -1){
-					if (IPT[rndPage]->space->pageTable[virtualPageReplaced].dirty == TRUE){
-						printf("Page#%d is dirty \n", rndPage);
-						OpenFile *replacedFile = fileSystem->Open(IPT[rndPage]->space->swapFileName);
-						replacedFile->WriteAt(&(machine->mainMemory[rndPage *PageSize]), PageSize, (IPT[rndPage]->space->pageTable[virtualPageReplaced].virtualPage)*PageSize);
-						printf("data swapped out from MM to %s \n", IPT[rndPage]->space->swapFileName);
-						IPT[rndPage]->space->pageTable[virtualPageReplaced].valid = FALSE;
-						delete replacedFile;
-					}
-
-					swapFile->ReadAt(&(machine->mainMemory[rndPage*PageSize]), PageSize, virtPageNum*PageSize); 
-					printf("virtual page# %d is read from %s to physical page# %d in MM\n", virtPageNum, IPT[rndPage]->space->swapFileName, rndPage ) ;
-					IPT[rndPage]->space->pageTable[virtualPageReplaced].valid = FALSE;
-					currentThread->space->pageTable[virtPageNum].valid = TRUE;
-					currentThread->space->pageTable[virtPageNum].physicalPage = rndPage;
-					// update IPT
-					IPT[rndPage]=currentThread;
-
-				}
-				
-				
+			int badVAddr = machine->ReadRegister(BadVAddrReg);
+			int virtPageNum = badVAddr / PageSize; 
+			if (verbosity)
+				printf("--Process %d requested virtual page %d \n", currentThread->getID(), virtPageNum);
+			int emptyPhysPage = bitMap->Find();		
+			OpenFile *swapFile = fileSystem->Open(currentThread->space->swapFileName); 
+			
+			if (emptyPhysPage != -1){				
+				currentThread->space->pageTable[virtPageNum].physicalPage = emptyPhysPage;				
+				swapFile->ReadAt(&(machine->mainMemory[emptyPhysPage*PageSize]), PageSize, virtPageNum*PageSize); 
+				currentThread->space->pageTable[virtPageNum].valid = TRUE;
+				if (verbosity)	
+					printf("---Free phys. page# %d assigned to process %d\n", emptyPhysPage, currentThread->getID()) ; 
+				else
+					printf(" Free phys. page# %d assigned to process %d\n", emptyPhysPage, currentThread->getID()) ;
+				IPT[emptyPhysPage]=currentThread;
+				int* tempPointer = new int (emptyPhysPage);	
+				FIFOList->Append((void*) tempPointer);
+				delete swapFile ;
 				
 			}
 			else{
-				printf(" The process is terminated \n");
-				//delete currentThread->space;
-				currentThread->Finish() ;
+				if (verbosity)
+					printf("---No free page is available.");			
+				
+				if (pageReplacementAlg == 1){
+					if (verbosity)
+						printf(" FIFO alg. is used for page replacement\n");
+					else
+						printf(" No free page is available.");
 
-			}
-			// printf("BitMap After PageFaulException Replace/Allocate\n");
-			// bitMap->Print();
-		}
-		
-		
-		
-		(void) interrupt->SetLevel(IntOn);
+					void * pFirstPage =  FIFOList->Remove(); 
+					FIFOList->Append(pFirstPage);					
+					int firstPage = *((int*) pFirstPage);
+					int virtualPageReplaced=-1;
+					if (verbosity)	
+						printf("----Phys. page# %d selected for page replacement \n", firstPage);
+					
+					for (int i = 0; i < IPT[firstPage]->space->numPages; i++)
+					{
+						if (IPT[firstPage]->space->pageTable[i].valid == TRUE){
+							if (IPT[firstPage]->space->pageTable[i].physicalPage == firstPage){
+								virtualPageReplaced = i ;
+								if (verbosity)							
+									printf("-----[More info:] Currently, phys. page# %d is associated with virt. page# %d of thread %d \n",
+									firstPage, virtualPageReplaced,IPT[firstPage]->getID());
+								break;
+							}	
+						}
+					}
+					if (virtualPageReplaced != -1){
+						
+						if (IPT[firstPage]->space->pageTable[virtualPageReplaced].dirty == TRUE){
+							if (verbosity)
+								printf("-----Page#%d is dirty \n", firstPage);
+							OpenFile *replacedFile = fileSystem->Open(IPT[firstPage]->space->swapFileName);
+							replacedFile->WriteAt(&(machine->mainMemory[firstPage*PageSize]), PageSize,
+							 (IPT[firstPage]->space->pageTable[virtualPageReplaced].virtualPage)*PageSize);
+							if (verbosity)
+								printf("------The content of page# %d was swapped out to %s \n", firstPage, IPT[firstPage]->space->swapFileName);
+							IPT[firstPage]->space->pageTable[virtualPageReplaced].valid = FALSE;
+							delete replacedFile;
+						}
+						swapFile->ReadAt(&(machine->mainMemory[firstPage*PageSize]), PageSize, virtPageNum*PageSize); 
+						IPT[firstPage]->space->pageTable[virtualPageReplaced].valid = FALSE;
+						if (verbosity)
+							printf("---Requested virtual page# %d read from %s to phys. page# %d\n", virtPageNum, currentThread->space->swapFileName, firstPage ) ;
+						
+						currentThread->space->pageTable[virtPageNum].physicalPage = firstPage;
+						currentThread->space->pageTable[virtPageNum].valid = TRUE;						
+						IPT[firstPage]=currentThread;
+						delete swapFile ;
+					}
+				}
+
+				else if (pageReplacementAlg == 2 ){// Random replacement: 
+					if (verbosity)
+						printf(" Random alg. is used for page replacement\n");
+					else
+						printf(" No free page is available.");
+					int rndPage = rand() % NumPhysPages;
+
+					if (verbosity)	
+						printf("----Phys. page# %d selected for page replacement \n", rndPage);
+					int virtualPageReplaced = -1;
+					for (int i = 0; i < IPT[rndPage]->space->numPages; i++)
+					{					
+						if (IPT[rndPage]->space->pageTable[i].valid == TRUE){
+							if (IPT[rndPage]->space->pageTable[i].physicalPage == rndPage){
+								virtualPageReplaced = i;
+								if (verbosity)							
+									printf("-----[More info:] Currently, phys. page# %d is associated with virt. page# %d of thread %d \n",
+								rndPage, virtualPageReplaced,IPT[rndPage]->getID());
+								break;
+							}									
+						}
+					}
+									
+					if (virtualPageReplaced != -1){
+						if (IPT[rndPage]->space->pageTable[virtualPageReplaced].dirty == TRUE){
+							if (verbosity)
+								printf("-----Page#%d is dirty \n", rndPage);
+							OpenFile *replacedFile = fileSystem->Open(IPT[rndPage]->space->swapFileName);
+							replacedFile->WriteAt(&(machine->mainMemory[rndPage *PageSize]), PageSize,
+							 (IPT[rndPage]->space->pageTable[virtualPageReplaced].virtualPage)*PageSize);
+							 if (verbosity)
+								printf("------The content of page# %d was swapped out to %s \n", rndPage, IPT[rndPage]->space->swapFileName);
+							IPT[rndPage]->space->pageTable[virtualPageReplaced].valid = FALSE;
+							delete replacedFile;
+						}
+
+						swapFile->ReadAt(&(machine->mainMemory[rndPage*PageSize]), PageSize, virtPageNum*PageSize); 						
+						IPT[rndPage]->space->pageTable[virtualPageReplaced].valid = FALSE;
+						if (verbosity)
+							printf("---Requested virtual page# %d read from %s to phys. page# %d\n", virtPageNum, currentThread->space->swapFileName, rndPage ) ;
+						currentThread->space->pageTable[virtPageNum].valid = TRUE;
+						currentThread->space->pageTable[virtPageNum].physicalPage = rndPage;						
+						IPT[rndPage]=currentThread;
+						delete swapFile ;
+					}
+				}
+				else{
+					printf(" The process is terminated \n");
+					delete currentThread->space;
+					currentThread->Finish() ;
+				}
+			}			
+			(void) interrupt->SetLevel(IntOn);
 		}
 		
 		break;
@@ -377,7 +362,7 @@ ExceptionHandler(ExceptionType which)
 					machine->WriteRegister(2, threadID);	// Return the thread ID as our Exec return variable.
 					threadID++;	// Increment the total number of threads.
 					execThread->Fork(processCreator, 0);	// Fork it.
-					printf("Exec thread %d created \n ", execThread->getID());
+					
 				}
 				else	// If not...
 				{
@@ -420,110 +405,64 @@ ExceptionHandler(ExceptionType which)
 		
 				(void) interrupt->SetLevel(IntOff);
 				printf("SYSTEM CALL: Exit, called by thread %i.\n",currentThread->getID());				
-				printf(" Process %i exited with the value of %d \n\n", currentThread->getID(), arg1);
+				printf("Process %i exited with the value of %d \n\n", currentThread->getID(), arg1);
 				
 				List* tempList = new List();
-				if(currentThread->space){	// Delete the used memory from the process.
-						
+				if(currentThread->space){	// Delete the used memory from the process.						
 					ListElement* first = FIFOList->getFirst() ;									
 					int it = 0;
 					int * element;
-					//printf("FIFO before update: \n");
-					for (ListElement *ptr = first; ptr != NULL; ptr = ptr->next){
-						element = (int*) ptr->item;
-						//printf("FIFO[%d] = %d \n ", it, *element);
-						it++;
-					}
 
-					it = 0 ;
 					first = FIFOList->getFirst() ;
 					int FIFOSize = FIFOList->getSize();
 					for (it = 0 ; it < FIFOSize ; it++){
-						//printf("item = %d \n ", it);
 						element = (int*) FIFOList->getFirst()->item;						
-						void* removedItem = FIFOList->Remove();
-						
-						
-						//printf("page %d removed from FIFO \n", *((int*) removedItem));						
+						void* removedItem = FIFOList->Remove();						
 						if (IPT[*element] != currentThread){														
-							tempList->Append(removedItem);
-							//printf("tempList last: %d \n",  *((int*) tempList->getLast()->item)) ; 
+							tempList->Append(removedItem);							
 						}
-					}
-					
+					}					
 					it = 0;
 					ListElement* uFirst = tempList->getFirst() ;
 					for (ListElement *ptr = uFirst; ptr != NULL; ptr = ptr->next){
-						element = (int*) ptr->item;
-						//printf("FIFO[%d] = %d \n ", it, *element);
+						element = (int*) ptr->item;						
 						FIFOList->Append(ptr->item);						
 						it++;
 					}
-					delete tempList;
-					//printf("\n\n\n Updated FIFO: current size = %d \n", FIFOList->getSize());
-					it = 0 ;
-					ListElement* FFirst = FIFOList->getFirst() ;
-					for (ListElement *ptr = FFirst; ptr != NULL; ptr = ptr->next){
+					delete tempList;					
+					if (verbosity){	
+						printf("FIFO List: ")	;
+						it = 0 ;			
+					for (ListElement *ptr = first; ptr != NULL; ptr = ptr->next){
 						element = (int*) ptr->item;
-						//printf("FIFO[%d] = %d \n ", it, *element);
+						if (it ==0)
+							printf("[ ");
+						else if (ptr-> next == NULL) 
+							printf("%d", it, *element);
+						else
+							printf("%d,", it, *element);
 						it++;
 					}
+					printf(" ]\n");
+					}
 
-
-					
-					
-					
 					for (int i = 0; i < NumPhysPages; i++)
 					{	
-						
-						if (IPT[i] == currentThread && IPT[i]!=NULL){
-							//printf("Bitmap of thread %d is deleted \n", currentThread->getID());
-							bitMap->Clear(i);
-							//bitMap->Print();
+						if (IPT[i] == currentThread && IPT[i]!=NULL){							
+							bitMap->Clear(i);							
 						}
 					}
-					
 				}
-				printf("Thread %d terminated \n\n", currentThread->getID());
-				// if (currentThread->getID() == 4){
-				// 	for (int k = 0 ; k<NumPhysPages; k++){
-						
-				// 		if (IPT[k] != NULL){
-							
-				// 			if (IPT[k]->getID() == 0 ){
-				// 				printf(" Page Table of Thread %d  \n",IPT[k]->getID() );
-
-								
-				// 				for(int l =0 ; l< IPT[k]->space->numPages ; l++){
-									
-				// 					//IPT[k]->space->pageTable[l].valid = FALSE; 
-				// 					printf(" virt. page#: %d    phys. page#: %d   valid: %d  \n", l , IPT[k]->space->pageTable[l].physicalPage ,IPT[k]->space->pageTable[l].valid );
-
-				// 				}
-				// 				break ; 
-				// 			}
-
-				// 		}
-
-				// 	}
-
-
-				// }
-			
-				
+				printf("Thread %d terminated \n\n", currentThread->getID());				
 				fileSystem->Remove(currentThread->space->swapFileName);
-
 				printf("Swap file %s removed \n", currentThread->space->swapFileName);
-
-				delete currentThread->space;
-				//level2 = IntOn;
+				delete currentThread->space;				
 				bitMap->Print();
-				(void) interrupt->SetLevel(IntOn);
-				
-				currentThread->Finish();	// Delete the thread.
-				
+				(void) interrupt->SetLevel(IntOn);				
+				currentThread->Finish();	// Delete the thread.				
 			}
 			break;
+			
            case SC_Yield :	// Yield to a new process.
 		   {
 			   printf("SYSTEM CALL: Yield, called by thread %i.\n",currentThread->getID());

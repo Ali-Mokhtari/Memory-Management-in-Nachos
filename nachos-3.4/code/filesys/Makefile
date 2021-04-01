@@ -508,8 +508,8 @@ translate.o: ../machine/translate.cc /usr/include/stdc-predef.h \
  /usr/include/xlocale.h ../machine/translate.h ../machine/disk.h \
  ../userprog/addrspace.h ../filesys/filesys.h ../filesys/openfile.h \
  ../userprog/bitmap.h ../filesys/openfile.h ../machine/translate.h \
- ../threads/system.h ../threads/utility.h ../threads/thread.h \
- ../machine/machine.h ../threads/list.h ../threads/scheduler.h \
+ ../machine/machine.h ../threads/system.h ../threads/utility.h \
+ ../threads/thread.h ../threads/list.h ../threads/scheduler.h \
  ../machine/interrupt.h ../threads/list.h ../machine/stats.h \
  ../machine/timer.h ../threads/bitmap.h ../threads/synch.h \
  ../filesys/synchdisk.h ../machine/disk.h ../threads/synch.h

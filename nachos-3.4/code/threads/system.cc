@@ -22,7 +22,7 @@ Timer *timer;				// the hardware timer device,
 int threadChoice;
 int pageReplacementAlg = 0 ;
 List* FIFOList = new List();
-int verbosity ; 
+int verbosity = 0; 
 #ifdef FILESYS_NEEDED
 FileSystem  *fileSystem;
 #endif
