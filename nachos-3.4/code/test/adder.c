@@ -9,5 +9,5 @@ int main() {
         
     }
     Write("\n Adding Complete\n",20,ConsoleOutput);
-    Exit(0);
+    Exit(x);
 }

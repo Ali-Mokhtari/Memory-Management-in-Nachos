@@ -37,12 +37,15 @@ Machine::Run()
         printf("Starting thread \"%s\" at time %d\n",
 	       currentThread->getName(), stats->totalTicks);
     interrupt->setStatus(UserMode);
+	
     for (;;) {
         OneInstruction(instr);
+		
 	interrupt->OneTick();
 	if (singleStep && (runUntilTime <= stats->totalTicks))
 	  Debugger();
     }
+	
 }
 
 
@@ -94,6 +97,7 @@ TypeToReg(RegType reg, Instruction *instr)
 void
 Machine::OneInstruction(Instruction *instr)
 {
+	
     int raw;
     int nextLoadReg = 0; 	
     int nextLoadValue = 0; 	// record delayed load operation, to apply
@@ -563,6 +567,7 @@ Machine::OneInstruction(Instruction *instr)
 						// are jumping into lala-land
     registers[PCReg] = registers[NextPCReg];
     registers[NextPCReg] = pcAfter;
+	
 }
 
 //----------------------------------------------------------------------
