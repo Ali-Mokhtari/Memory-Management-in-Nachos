@@ -99,7 +99,7 @@ main(int argc, char **argv)
 		printf(" --Page Size: %d \n", PageSize );
 		switch(pageReplacementAlg){
 			case 0:
-				printf(" --Page Replacement Algorithm: Disable Virtual Memory (Demand Paging Only)");
+				printf(" --Page Replacement Algorithm: Disable Virtual Memory (Demand Paging Only)\n");
 				printf("-------------------------------------------------------------------------\n");
 				break;
 

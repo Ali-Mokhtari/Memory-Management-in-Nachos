@@ -120,15 +120,11 @@ AddrSpace::AddrSpace(OpenFile *executable, int thread_id) // adding thread_id
 
     swapFileName = new char[32];   
     sprintf(swapFileName, "%d.swap",thread_id); 
-    fileSystem->Create(swapFileName, swapSize)  ;
-    //printf("%s created \n", swapFileName);
+    fileSystem->Create(swapFileName, swapSize)  ;    
     executable->ReadAt(buffer,swapSize, sizeof(noffH)); // sizeof(noffh) -> header size
     OpenFile *swapFile = fileSystem->Open(swapFileName);   
-    swapFile->WriteAt(buffer, swapSize,0);
-    //printf("Executable has been written to %s \n", swapFileName);    
-    //bitMap->Print();
-    //machine->PrintMemory();
-    delete []buffer;
+    swapFile->WriteAt(buffer, swapSize,0);    
+    delete []buffer;   
     delete swapFile;  
 
     /*  End Code Changes By Group ACM ( Ali, Connor, Majid) */
@@ -142,12 +138,8 @@ AddrSpace::AddrSpace(OpenFile *executable, int thread_id) // adding thread_id
 
 AddrSpace::~AddrSpace()
 {
-   
-//    for(int i = 0; i < numPages; i++){
-//        bitMap->Clear(pageTable[i].physicalPage);
-//    }
    delete pageTable;
-  //bitMap->Print();
+  
 }
 // **************************************** End changes made by Connor Rawls ****************************************
 

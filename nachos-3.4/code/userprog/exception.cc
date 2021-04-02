@@ -154,13 +154,15 @@ ExceptionHandler(ExceptionType which)
 			}
 			else{
 				if (verbosity)
-					printf("---No free page is available.");			
+					printf("---No free page is available.\n");			
+				else
+					printf(" No free page is available.");
 				
 				if (pageReplacementAlg == 1){
 					if (verbosity)
 						printf(" FIFO alg. is used for page replacement\n");
 					else
-						printf(" No free page is available.");
+						printf(" FIFO alg. is used for page replacement: \n");
 
 					void * pFirstPage =  FIFOList->Remove(); 
 					FIFOList->Append(pFirstPage);					
@@ -197,7 +199,10 @@ ExceptionHandler(ExceptionType which)
 						swapFile->ReadAt(&(machine->mainMemory[firstPage*PageSize]), PageSize, virtPageNum*PageSize); 
 						IPT[firstPage]->space->pageTable[virtualPageReplaced].valid = FALSE;
 						if (verbosity)
-							printf("---Requested virtual page# %d read from %s to phys. page# %d\n", virtPageNum, currentThread->space->swapFileName, firstPage ) ;
+							printf("---Requested virtual page# %d was read from %s to phys. page# %d\n", virtPageNum, currentThread->space->swapFileName, firstPage ) ;
+						else
+							printf(" Requested virtual page# %d was read from %s to phys. page# %d\n", virtPageNum,
+							 currentThread->space->swapFileName, firstPage ) ;
 						
 						currentThread->space->pageTable[virtPageNum].physicalPage = firstPage;
 						currentThread->space->pageTable[virtPageNum].valid = TRUE;						
@@ -210,7 +215,7 @@ ExceptionHandler(ExceptionType which)
 					if (verbosity)
 						printf(" Random alg. is used for page replacement\n");
 					else
-						printf(" No free page is available.");
+						printf(" Random alg. is used for page replacement:\n");
 					int rndPage = rand() % NumPhysPages;
 
 					if (verbosity)	
@@ -245,7 +250,10 @@ ExceptionHandler(ExceptionType which)
 						swapFile->ReadAt(&(machine->mainMemory[rndPage*PageSize]), PageSize, virtPageNum*PageSize); 						
 						IPT[rndPage]->space->pageTable[virtualPageReplaced].valid = FALSE;
 						if (verbosity)
-							printf("---Requested virtual page# %d read from %s to phys. page# %d\n", virtPageNum, currentThread->space->swapFileName, rndPage ) ;
+							printf("---Requested virtual page# %d was read from %s to phys. page# %d\n", virtPageNum, currentThread->space->swapFileName, rndPage ) ;
+						else
+							printf(" Requested virtual page# %d was read from %s to phys. page# %d\n", virtPageNum,
+							 currentThread->space->swapFileName, rndPage ) ;
 						currentThread->space->pageTable[virtPageNum].valid = TRUE;
 						currentThread->space->pageTable[virtPageNum].physicalPage = rndPage;						
 						IPT[rndPage]=currentThread;
@@ -253,7 +261,7 @@ ExceptionHandler(ExceptionType which)
 					}
 				}
 				else{
-					printf(" The process is terminated \n");
+					printf(" ERROR: Not enough memory is available. The process %d is terminated \n", currentThread->getID());
 					delete currentThread->space;
 					currentThread->Finish() ;
 				}
@@ -462,7 +470,7 @@ ExceptionHandler(ExceptionType which)
 				currentThread->Finish();	// Delete the thread.				
 			}
 			break;
-			
+
            case SC_Yield :	// Yield to a new process.
 		   {
 			   printf("SYSTEM CALL: Yield, called by thread %i.\n",currentThread->getID());
